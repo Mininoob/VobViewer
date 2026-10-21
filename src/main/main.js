@@ -14,6 +14,7 @@ function createWindow() {
     height: 740,
     minWidth: 900,
     minHeight: 600,
+    icon: path.join(__dirname, '..', '..', 'assets', 'icon-256.png'),
     frame: false,
     // VOBVIEWER_OPAQUE is a dev flag for screen recording: gdigrab can't
     // capture a transparent window cleanly, so this fills the margins with

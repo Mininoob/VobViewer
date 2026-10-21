@@ -1,12 +1,13 @@
 {
   "name": "vobviewer",
   "productName": "VobViewer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Retro-styled player and library for DVD camcorder footage (VIDEO_TS/VOB folders)",
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
-    "pack": "electron-packager . VobViewer --platform=win32 --arch=x64 --out=release --overwrite --asar --ignore=\"^/release\" --ignore=\"^/docs\" --ignore=\"^/site\" --ignore=\"^/node_modules\" --ignore=\"^/PRODUCT.md\" --ignore=\"^/DESIGN.md\" --ignore=\"^/LIBRARY-BRIEF.md\" --ignore=\"^/scripts\" && node scripts/bundle-ffmpeg.js"
+    "icon": "node scripts/make-icon.mjs",
+    "pack": "electron-packager . VobViewer --platform=win32 --arch=x64 --icon=assets/icon.ico --out=release --overwrite --asar --ignore=\"^/release\" --ignore=\"^/docs\" --ignore=\"^/site\" --ignore=\"^/node_modules\" --ignore=\"^/PRODUCT.md\" --ignore=\"^/DESIGN.md\" --ignore=\"^/LIBRARY-BRIEF.md\" --ignore=\"^/scripts\" && node scripts/bundle-ffmpeg.js"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,8 @@
   "license": "MIT",
   "devDependencies": {
     "@electron/packager": "^20.3.0",
-    "electron": "^44.0.0"
+    "electron": "^44.0.0",
+    "png-to-ico": "^3.0.2",
+    "sharp": "^0.35.5"
   }
 }

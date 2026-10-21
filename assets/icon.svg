@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <!-- VobViewer icon: a mini-DVD on green LCD glass, orange hub ring. -->
+  <defs>
+    <linearGradient id="lcd" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#24391b"/>
+      <stop offset="0.55" stop-color="#17260f"/>
+      <stop offset="1" stop-color="#101a0b"/>
+    </linearGradient>
+    <radialGradient id="plastic" cx="0.38" cy="0.32" r="0.85">
+      <stop offset="0" stop-color="#f4f7fa"/>
+      <stop offset="0.5" stop-color="#ccd1d7"/>
+      <stop offset="0.85" stop-color="#9aa1a9"/>
+      <stop offset="1" stop-color="#b3b9c0"/>
+    </radialGradient>
+    <radialGradient id="sheen" cx="0.3" cy="0.22" r="0.6">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="bezelglare" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d8f0d0" stop-opacity="0.14"/>
+      <stop offset="0.35" stop-color="#d8f0d0" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- LCD tile -->
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="#3c4248"/>
+  <rect x="12" y="12" width="232" height="232" rx="48" fill="url(#lcd)"/>
+  <!-- scanlines -->
+  <g fill="#000000" opacity="0.16">
+    <rect x="12" y="34" width="232" height="3"/>
+    <rect x="12" y="58" width="232" height="3"/>
+    <rect x="12" y="82" width="232" height="3"/>
+    <rect x="12" y="106" width="232" height="3"/>
+    <rect x="12" y="130" width="232" height="3"/>
+    <rect x="12" y="154" width="232" height="3"/>
+    <rect x="12" y="178" width="232" height="3"/>
+    <rect x="12" y="202" width="232" height="3"/>
+    <rect x="12" y="226" width="232" height="3"/>
+  </g>
+  <rect x="12" y="12" width="232" height="232" rx="48" fill="url(#bezelglare)"/>
+
+  <!-- disc shadow -->
+  <circle cx="131" cy="134" r="88" fill="#000000" opacity="0.4"/>
+
+  <!-- the mini-DVD -->
+  <circle cx="128" cy="128" r="88" fill="url(#plastic)"/>
+  <!-- iridescent hints -->
+  <g opacity="0.8">
+    <path d="M128 40 A88 88 0 0 1 204 84 L166 106 A44 44 0 0 0 128 84 Z" fill="#bcd8ff" opacity="0.22"/>
+    <path d="M204 172 A88 88 0 0 1 90 208 L109 168 A44 44 0 0 0 166 150 Z" fill="#ffc7e8" opacity="0.18"/>
+    <path d="M40 128 A88 88 0 0 1 62 70 L95 97 A44 44 0 0 0 84 128 Z" fill="#bdf4c4" opacity="0.2"/>
+  </g>
+  <!-- data rings -->
+  <circle cx="128" cy="128" r="80" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>
+  <circle cx="128" cy="128" r="48" fill="none" stroke="#5a6069" stroke-opacity="0.35" stroke-width="1.5"/>
+  <!-- top-left sheen -->
+  <circle cx="128" cy="128" r="88" fill="url(#sheen)"/>
+
+  <!-- orange hub ring (START/STOP heritage) -->
+  <circle cx="128" cy="128" r="31" fill="none" stroke="#b03310" stroke-width="15"/>
+  <circle cx="128" cy="128" r="31" fill="none" stroke="#ff5a2a" stroke-width="11"/>
+  <circle cx="128" cy="128" r="36.5" fill="none" stroke="#ffb08a" stroke-opacity="0.65" stroke-width="2"/>
+
+  <!-- hub + hole -->
+  <circle cx="128" cy="128" r="23" fill="#c6cbd1"/>
+  <circle cx="128" cy="128" r="15" fill="#24272c"/>
+  <circle cx="128" cy="128" r="15" fill="none" stroke="#6e757e" stroke-width="2.5"/>
+</svg>
