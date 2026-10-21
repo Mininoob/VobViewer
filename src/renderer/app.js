@@ -1120,8 +1120,9 @@ function renderSetup() {
       const mySel = selIdx;
       li.classList.toggle('sel', selIdx === setup.sel);
       const cap = document.createElement('span');
-      cap.className = 'setupcap';
+      cap.className = 'setupcap' + (row.val == null ? ' wide' : '');
       cap.textContent = row.cap;
+      cap.title = row.cap; // full path on hover when truncated
       li.appendChild(cap);
       if (row.val != null) {
         const val = document.createElement('span');

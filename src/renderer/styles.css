@@ -1541,6 +1541,18 @@ input[type="range"]:focus-visible { outline: 2px solid var(--key-blue); outline-
   letter-spacing: 0.1em;
 }
 
+/* Rows without a value (watched folders, ADD FOLDER): the caption is the
+   content, so it takes the row and truncates instead of running under the
+   action key, which stays pinned to the right. */
+.setupcap.wide {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .setupval {
   flex: 1;
   min-width: 0;
