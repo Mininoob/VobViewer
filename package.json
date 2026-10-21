@@ -1,0 +1,21 @@
+{
+  "name": "vobviewer",
+  "productName": "VobViewer",
+  "version": "1.0.0",
+  "description": "Retro-styled player and library for DVD camcorder footage (VIDEO_TS/VOB folders)",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-packager . VobViewer --platform=win32 --arch=x64 --out=release --overwrite --asar --ignore=\"^/release\" --ignore=\"^/docs\" --ignore=\"^/node_modules\" --ignore=\"^/PRODUCT.md\" --ignore=\"^/DESIGN.md\" --ignore=\"^/LIBRARY-BRIEF.md\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mininoob/VobViewer.git"
+  },
+  "author": "Mininoob",
+  "license": "MIT",
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "^44.0.0"
+  }
+}

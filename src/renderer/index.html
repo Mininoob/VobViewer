@@ -1,0 +1,289 @@
+<!doctype html>
+<!--
+  The whole UI is styled after a mid-2000s DVD camcorder: a frameless moulded
+  "pod" (the window silhouette) with green LCD readouts, a yellow selection
+  bar, blue action keys, and an orange ring on the play button. The library
+  view ("disc wallet") is drawn as a zip-up disc binder with vinyl sleeves.
+  Color roles are strict: yellow = selection, blue = action, orange =
+  activity/error. All graphics are CSS and inline SVG; no network assets.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <!-- media/img allow file: so cached MP4s/thumbnails load with native Range (seek) support -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src file: data:; media-src file:; style-src 'self'" />
+  <title>VobViewer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="device">
+
+    <!-- Main pod -->
+    <section id="pod">
+      <header id="podtop">
+        <span id="brandname">VOBVIEWER</span>
+        <span id="modelline" class="printed">DIGITAL VIDEO PLAYBACK · NTSC</span>
+        <span id="accesslamp" title="Disc activity"></span>
+        <span id="accesslabel" class="printed">ACCESS</span>
+        <div id="discreadout" class="lcd-surface"><span id="disclabel">NO DISC</span></div>
+        <div id="winkeys">
+          <button id="k-setup" class="roundkey roundkey-sm" type="button" title="Setup" aria-label="Open setup">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="2.4"/><circle cx="15.5" cy="12" r="2.4"/><circle cx="7" cy="17" r="2.4"/></svg>
+          </button>
+          <button id="winmin" class="roundkey roundkey-sm" type="button" title="Minimize" aria-label="Minimize window">
+            <svg viewBox="0 0 24 24"><path d="M5 17h14v3H5z"/></svg>
+          </button>
+          <button id="winclose" class="roundkey roundkey-sm" type="button" title="Close" aria-label="Close window">
+            <svg viewBox="0 0 24 24"><path d="M6 4.5 12 10.5 18 4.5 19.5 6 13.5 12 19.5 18 18 19.5 12 13.5 6 19.5 4.5 18 10.5 12 4.5 6z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div id="screenbezel">
+        <div id="videowell">
+          <video id="video" preload="auto"></video>
+          <div id="emptystate" class="lcd-menu">
+            <div id="emptyglyph" aria-hidden="true">
+              <svg viewBox="0 0 64 64" width="64" height="64">
+                <circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="3"/>
+                <circle cx="32" cy="32" r="8"  fill="none" stroke="currentColor" stroke-width="3"/>
+                <circle cx="32" cy="32" r="2.5" fill="currentColor"/>
+              </svg>
+            </div>
+            <div id="emptytitle">INSERT DISC</div>
+            <div id="emptyhint">DROP A DISC FOLDER (VIDEO_TS) ANYWHERE ON THE DECK</div>
+            <button id="browse" class="bluekey" type="button">BROWSE&hellip;</button>
+          </div>
+          <div id="bigstatus" class="hidden"></div>
+          <div id="discprompt" class="lcd-menu hidden">
+            <div class="dp-titlebar">
+              <span id="dp-title">DISC&nbsp;DETECTED</span>
+              <button id="dp-ignore" class="bluekey bluekey-sq" type="button" title="Ignore this disc" aria-label="Ignore this disc">
+                <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+              </button>
+            </div>
+            <div id="dp-label"></div>
+            <div id="dp-dup" class="hidden"></div>
+            <div id="dp-namerow">
+              <span class="dp-cap">LABEL</span>
+              <input id="dp-name" maxlength="40" spellcheck="false" />
+            </div>
+            <div id="dp-keys">
+              <button id="dp-import" class="bluekey" type="button">IMPORT&nbsp;TO&nbsp;LIBRARY</button>
+              <button id="dp-play" class="bluekey" type="button">PLAY&nbsp;FROM&nbsp;DISC</button>
+            </div>
+            <div id="dp-progress" class="hidden">
+              <div id="dp-pct"></div>
+              <span class="sceneprogress" id="dp-bar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              <div id="dp-file"></div>
+              <button id="dp-cancel" class="bluekey" type="button">CANCEL</button>
+            </div>
+            <div id="dp-note" class="hidden"></div>
+          </div>
+          <div id="droptarget" class="hidden">
+            <div id="dropframe" class="lcd-menu">
+              <div id="droptext">LOAD&nbsp;DISC</div>
+              <div id="dropbar">RELEASE TO READ DISC</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="lcdstrip" class="lcd-surface">
+          <span id="tc-now" class="lcd-num">--:--</span>
+          <span class="lcd-sep">/</span>
+          <span id="tc-total" class="lcd-num">--:--</span>
+          <span id="lcd-scene">STANDBY</span>
+          <span id="lcd-state"></span>
+        </div>
+      </div>
+
+      <div id="transport">
+        <button id="k-play" class="roundkey roundkey-big" type="button" title="Play / Pause (Space)" aria-label="Play or pause">
+          <svg id="g-play" viewBox="0 0 24 24"><path d="M8 4.5v15L20.5 12z"/></svg>
+          <svg id="g-pause" viewBox="0 0 24 24" class="hidden"><path d="M6.5 4h4.5v16H6.5zM14 4h4.5v16H14z"/></svg>
+        </button>
+        <button id="k-stop" class="roundkey" type="button" title="Stop" aria-label="Stop">
+          <svg viewBox="0 0 24 24"><path d="M5.5 5.5h13v13h-13z"/></svg>
+        </button>
+        <div id="pillkeys">
+          <button id="k-prev" class="pillkey" type="button" title="Previous scene (Page Up)" aria-label="Previous scene">
+            <svg viewBox="0 0 24 24"><path d="M6 5h3v14H6zM20 5v14L9.5 12z"/></svg>
+          </button>
+          <button id="k-next" class="pillkey" type="button" title="Next scene (Page Down)" aria-label="Next scene">
+            <svg viewBox="0 0 24 24"><path d="M15 5h3v14h-3zM4 5v14L14.5 12z"/></svg>
+          </button>
+        </div>
+        <button id="k-library" class="roundkey" type="button" title="Disc wallet (L)" aria-label="Open disc wallet">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="12" r="1.8"/><path d="M14 5.5a6.5 6.5 0 0 1 0 13M17.5 4a8.8 8.8 0 0 1 0 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div id="seekgroup">
+          <label class="printed" for="seek">SEARCH</label>
+          <input id="seek" type="range" min="0" max="1000" value="0" step="1" disabled aria-label="Seek position" />
+        </div>
+        <div id="volgroup">
+          <span class="printed" id="vol-label">
+            <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            VOL
+          </span>
+          <input id="volume" type="range" min="0" max="100" value="80" aria-labelledby="vol-label" />
+        </div>
+      </div>
+
+      <footer id="podbase">
+        <span id="statusline" class="printed">READY</span>
+        <span id="badge" class="printed">MPEG-2 &rarr; H.264 · 5.1 &rarr; STEREO</span>
+        <div class="screw screw-bl"></div>
+        <div class="screw screw-br"></div>
+      </footer>
+    </section>
+
+    <!-- Hinge to the flip-screen -->
+    <div id="hinge" aria-hidden="true"><i></i><i></i><i></i></div>
+
+    <!-- Flip-screen: VISUAL INDEX -->
+    <aside id="panel">
+      <div id="indexlcd" class="lcd-surface">
+        <div id="indexheader">
+          <span id="indextitle">VISUAL&nbsp;INDEX</span>
+          <span id="indexcount"></span>
+        </div>
+        <ul id="scenelist"></ul>
+        <div id="indexempty">NO&nbsp;DISC&nbsp;LOADED</div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- SETUP screen (DVD405 menu) -->
+  <section id="setup" class="hidden">
+    <div id="setupcase">
+      <div id="setuplcd" class="lcd-surface">
+        <header id="setupheader">
+          <span>SETUP</span>
+          <button id="setupclose" class="bluekey bluekey-sq" type="button" title="Close (Esc)" aria-label="Close setup">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </header>
+        <ul id="setuprows"></ul>
+        <div id="setupfoot">&#9650;&#9660;&nbsp;SELECT&nbsp;&nbsp;·&nbsp;&nbsp;ENTER&nbsp;OK&nbsp;&nbsp;·&nbsp;&nbsp;ESC&nbsp;CLOSE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Disc Wallet -->
+  <section id="binder" class="hidden">
+    <div id="bindercase">
+      <div id="zipperpull" aria-hidden="true"></div>
+      <header id="bindertop">
+        <span id="binderbrand">VOBVIEWER</span>
+        <span class="printed">DISC&nbsp;WALLET</span>
+        <span id="binderstatus" class="printed"></span>
+        <div id="binderkeys">
+          <button id="k-setup2" class="roundkey roundkey-sm" type="button" title="Setup" aria-label="Open setup">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="2.4"/><circle cx="15.5" cy="12" r="2.4"/><circle cx="7" cy="17" r="2.4"/></svg>
+          </button>
+          <button id="k-player" class="roundkey" type="button" title="Back to player (Esc)" aria-label="Back to player">
+            <svg viewBox="0 0 24 24"><path d="M8 4.5v15L20.5 12z"/></svg>
+          </button>
+          <button class="roundkey roundkey-sm act-min" type="button" title="Minimize" aria-label="Minimize window">
+            <svg viewBox="0 0 24 24"><path d="M5 17h14v3H5z"/></svg>
+          </button>
+          <button class="roundkey roundkey-sm act-close" type="button" title="Close" aria-label="Close window">
+            <svg viewBox="0 0 24 24"><path d="M6 4.5 12 10.5 18 4.5 19.5 6 13.5 12 19.5 18 18 19.5 12 13.5 6 19.5 4.5 18 10.5 12 4.5 6z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div id="binderbody">
+        <aside id="spine">
+          <div id="spinelabel">MEMORY&nbsp;REEL</div>
+          <button id="reel-all" class="bluekey" type="button" disabled>PLAY&nbsp;ALL</button>
+          <button id="reel-shuffle" class="bluekey" type="button" disabled>SHUFFLE</button>
+        </aside>
+
+        <div id="spreadarea">
+          <div id="spread">
+            <div class="page" id="page-left"></div>
+            <div class="page" id="page-right"></div>
+          </div>
+          <div id="binderempty" class="hidden">
+            <div id="binderempty-title">EMPTY&nbsp;WALLET</div>
+            <div id="binderempty-hint">POINT VOBVIEWER AT THE FOLDER WHERE YOUR DISC COPIES LIVE</div>
+            <button id="addroot" class="bluekey" type="button">ADD&nbsp;ARCHIVE&nbsp;FOLDER&hellip;</button>
+          </div>
+        </div>
+
+        <nav id="tabstrip" aria-label="Projects"></nav>
+      </div>
+
+      <footer id="binderbottom">
+        <button id="page-prev" class="pillkey" type="button" title="Previous spread (Page Up)" aria-label="Previous spread">
+          <svg viewBox="0 0 24 24"><path d="M15.5 4 8 12l7.5 8 1.8-1.9L11.6 12l5.7-6.1z"/></svg>
+        </button>
+        <span id="pageindicator" class="printed"></span>
+        <button id="page-next" class="pillkey" type="button" title="Next spread (Page Down)" aria-label="Next spread">
+          <svg viewBox="0 0 24 24"><path d="M8.5 4 16 12l-7.5 8-1.8-1.9L12.4 12 6.7 5.9z"/></svg>
+        </button>
+        <button id="addroot2" class="bluekey" type="button">ADD&nbsp;ARCHIVE&hellip;</button>
+      </footer>
+
+      <div id="fanstrip" class="lcd-surface hidden">
+        <div id="fanheader">
+          <span id="fantitle"></span>
+          <span id="faninfo"></span>
+          <button id="fanplay" class="bluekey" type="button">PLAY&nbsp;DISC</button>
+          <button id="fanclose" class="roundkey roundkey-sm" type="button" title="Put disc back (Esc)" aria-label="Put disc back">
+            <svg viewBox="0 0 24 24"><path d="M6 4.5 12 10.5 18 4.5 19.5 6 13.5 12 19.5 18 18 19.5 12 13.5 6 19.5 4.5 18 10.5 12 4.5 6z"/></svg>
+          </button>
+        </div>
+        <ul id="fanlist"></ul>
+      </div>
+    </div>
+  </section>
+
+  <template id="pocket-t">
+    <div class="pocket" tabindex="0">
+      <div class="sleeve">
+        <div class="indexcard"><img alt="" draggable="false"/><img alt="" draggable="false"/><img alt="" draggable="false"/></div>
+        <div class="disc">
+          <div class="dischole"></div>
+          <span class="disctitle"></span>
+        </div>
+        <span class="ejectednote hidden">EJECTED</span>
+      </div>
+      <div class="pocketchip lcd-surface">
+        <span class="chipname"></span>
+        <span class="chipinfo"></span>
+      </div>
+      <button class="bluekey bluekey-sq forgetbtn hidden" type="button" title="Remove from wallet" aria-label="Remove from wallet">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </template>
+
+  <template id="fanscene-t">
+    <li class="fanscene" tabindex="0">
+      <div class="fanthumb"><img alt="" draggable="false"/></div>
+      <span class="fanname"></span>
+      <span class="fanmeta"></span>
+    </li>
+  </template>
+
+  <template id="scenerow-t">
+    <li class="scenerow" tabindex="0">
+      <div class="thumbwell"><img alt="" draggable="false" /><span class="thumbwait">&#9679;</span></div>
+      <div class="scenemeta">
+        <span class="scenename"></span>
+        <span class="sceneduration"></span>
+        <span class="scenestatus"></span>
+        <span class="sceneprogress hidden"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+      </div>
+      <button class="bluekey bluekey-sq exportbtn" type="button" title="Export scene as MP4" aria-label="Export scene as MP4" disabled>
+        <svg viewBox="0 0 24 24"><path d="M12 3v10.5M7.5 9.5 12 14l4.5-4.5M5 17h14v3H5z"/></svg>
+      </button>
+    </li>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

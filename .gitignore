@@ -1,0 +1,8 @@
+node_modules/
+release/
+
+# local design/working notes, not part of the app
+PRODUCT.md
+DESIGN.md
+LIBRARY-BRIEF.md
+.claude/
