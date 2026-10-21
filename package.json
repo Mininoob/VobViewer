@@ -6,7 +6,7 @@
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
-    "pack": "electron-packager . VobViewer --platform=win32 --arch=x64 --out=release --overwrite --asar --ignore=\"^/release\" --ignore=\"^/docs\" --ignore=\"^/node_modules\" --ignore=\"^/PRODUCT.md\" --ignore=\"^/DESIGN.md\" --ignore=\"^/LIBRARY-BRIEF.md\""
+    "pack": "electron-packager . VobViewer --platform=win32 --arch=x64 --out=release --overwrite --asar --ignore=\"^/release\" --ignore=\"^/docs\" --ignore=\"^/site\" --ignore=\"^/node_modules\" --ignore=\"^/PRODUCT.md\" --ignore=\"^/DESIGN.md\" --ignore=\"^/LIBRARY-BRIEF.md\""
   },
   "repository": {
     "type": "git",
