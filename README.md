@@ -40,18 +40,18 @@ disc files are never modified.
 
 ## Requirements
 
-- Windows 10 or 11
-- [ffmpeg](https://www.gyan.dev/ffmpeg/builds/), the "full" build, which
-  includes the `dvdvideo` demuxer this app depends on. VobViewer looks for it
-  in `C:\ffmpeg\bin`; set the `VOBVIEWER_FFMPEG_DIR` environment variable if
-  yours lives somewhere else.
-- [Node.js](https://nodejs.org) 18 or newer, only if you're building from
-  source.
+- Windows 10 or 11. The release zip includes ffmpeg, so there's nothing else
+  to install.
+- If you run from source instead, you need [Node.js](https://nodejs.org) 18+
+  and [ffmpeg](https://www.gyan.dev/ffmpeg/builds/) (the "full" build, which
+  has the `dvdvideo` demuxer this app depends on). VobViewer looks for ffmpeg
+  in this order: the `VOBVIEWER_FFMPEG_DIR` environment variable, an `ffmpeg`
+  folder next to the exe, then `C:\ffmpeg\bin`.
 
 ## Download
 
 Grab the zip from the [releases page](../../releases), extract it anywhere,
-and run `VobViewer.exe`. You still need ffmpeg installed (see above).
+and run `VobViewer.exe`. That's the whole install.
 
 ## Building from source
 
@@ -68,8 +68,11 @@ To package a Windows build:
 npm run pack
 ```
 
-That produces `release/VobViewer-win32-x64/` with `VobViewer.exe` inside.
-Zip the folder if you want to hand it to someone.
+That produces `release/VobViewer-win32-x64/` with `VobViewer.exe` inside,
+and copies ffmpeg from `C:\ffmpeg\bin` (or `VOBVIEWER_FFMPEG_DIR`) into the
+folder so the result is self-contained. ffmpeg is GPL-licensed; its license
+text ships beside the binaries. Zip the folder if you want to hand it to
+someone.
 
 ## Keyboard
 

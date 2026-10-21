@@ -4,7 +4,23 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const FFMPEG_DIR = process.env.VOBVIEWER_FFMPEG_DIR || 'C:\\ffmpeg\\bin';
+// Where ffmpeg lives, first hit wins: the env override, the ffmpeg folder
+// bundled next to VobViewer.exe in release zips, then a system install.
+function resolveFfmpegDir(execDir) {
+  const candidates = [
+    process.env.VOBVIEWER_FFMPEG_DIR,
+    path.join(execDir, 'ffmpeg'),
+    'C:\\ffmpeg\\bin',
+  ].filter(Boolean);
+  for (const dir of candidates) {
+    try {
+      if (fs.existsSync(path.join(dir, 'ffmpeg.exe'))) return dir;
+    } catch {}
+  }
+  return candidates[candidates.length - 1];
+}
+
+const FFMPEG_DIR = resolveFfmpegDir(path.dirname(process.execPath));
 const FFMPEG = path.join(FFMPEG_DIR, 'ffmpeg.exe');
 const FFPROBE = path.join(FFMPEG_DIR, 'ffprobe.exe');
 
@@ -12,7 +28,7 @@ function checkBinaries() {
   const missing = [FFMPEG, FFPROBE].filter((p) => !fs.existsSync(p));
   return missing.length === 0
     ? null
-    : `ffmpeg not found: ${missing.join(', ')}\nInstall ffmpeg or set VOBVIEWER_FFMPEG_DIR.`;
+    : `ffmpeg not found: ${missing.join(', ')}\nReinstall VobViewer (the release zip includes ffmpeg), install ffmpeg to C:\\ffmpeg, or set VOBVIEWER_FFMPEG_DIR.`;
 }
 
 // Runs a binary, collects stdout fully, keeps only the tail of stderr for
@@ -160,6 +176,7 @@ function parseProgressLine(line) {
 module.exports = {
   FFMPEG,
   FFPROBE,
+  resolveFfmpegDir,
   checkBinaries,
   run,
   probeChapters,
