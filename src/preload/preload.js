@@ -2,6 +2,14 @@
 
 const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
+// Dev-only recorder bridge for website demo clips (see main.js).
+if (process.env.VOBVIEWER_CAPTURE) {
+  contextBridge.exposeInMainWorld('vvdev', {
+    captureId: () => ipcRenderer.invoke('dev:captureId'),
+    saveRecording: (name, buf) => ipcRenderer.invoke('dev:saveRecording', name, buf),
+  });
+}
+
 contextBridge.exposeInMainWorld('vobviewer', {
   // Electron >= 32: File.path is gone; this is the only way to get a dropped path.
   getDroppedPath: (file) => webUtils.getPathForFile(file),

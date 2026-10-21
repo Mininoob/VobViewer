@@ -15,8 +15,11 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     frame: false,
-    transparent: true,
-    backgroundColor: '#00000000',
+    // VOBVIEWER_OPAQUE is a dev flag for screen recording: gdigrab can't
+    // capture a transparent window cleanly, so this fills the margins with
+    // the website's backdrop color instead.
+    transparent: !process.env.VOBVIEWER_OPAQUE,
+    backgroundColor: process.env.VOBVIEWER_OPAQUE ? '#1b1e23' : '#00000000',
     title: 'VobViewer',
     webPreferences: {
       contextIsolation: true,
@@ -52,6 +55,23 @@ app.whenReady().then(() => {
   createWindow();
   discwatch.start(library.getSettings().autoDetect);
 });
+
+// Dev-only self-capture used to record demo clips for the website: the app
+// records its own window (immune to occlusion), renderer sends the webm back.
+if (process.env.VOBVIEWER_CAPTURE) {
+  const fs = require('fs');
+  const { ipcMain, desktopCapturer } = require('electron');
+  ipcMain.handle('dev:captureId', async () => {
+    const sources = await desktopCapturer.getSources({ types: ['window'] });
+    return sources.find((s) => s.name === 'VobViewer')?.id || null;
+  });
+  ipcMain.handle('dev:saveRecording', (_e, name, buf) => {
+    const safe = String(name).replace(/[^a-z0-9._-]/gi, '');
+    const out = path.join(app.getPath('temp'), safe);
+    fs.writeFileSync(out, Buffer.from(buf));
+    return out;
+  });
+}
 
 app.on('before-quit', () => {
   require('./discwatch').stop();
