@@ -35,6 +35,8 @@ library view will feel familiar.
 - A setup screen manages watched folders, the import folder, disc
   auto-detect, and the conversion cache.
 
+![The disc wallet](docs/wallet.png)
+
 Titles and library data live in `%LOCALAPPDATA%\VobViewer`. Your original
 disc files are never modified.
 
