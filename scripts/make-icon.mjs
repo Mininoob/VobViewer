@@ -1,7 +1,7 @@
 // Renders assets/icon.svg into the app's .ico and the website's favicons.
 // Usage: node scripts/make-icon.mjs
 
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import sharp from 'sharp';
@@ -17,15 +17,17 @@ const [p16, p24, p32, p48, p64, p128, p180, p256] = await Promise.all(
 );
 
 mkdirSync(join(root, 'assets'), { recursive: true });
-mkdirSync(join(root, 'site', 'assets'), { recursive: true });
 
 // App icon: multi-size .ico for the exe (packager) and a png for the dev window.
 writeFileSync(join(root, 'assets', 'icon.ico'), await pngToIco([p16, p24, p32, p48, p64, p128, p256]));
 writeFileSync(join(root, 'assets', 'icon-256.png'), p256);
+console.log('make-icon: wrote assets/icon.ico and assets/icon-256.png');
 
-// Site favicons.
-writeFileSync(join(root, 'site', 'assets', 'favicon.ico'), await pngToIco([p16, p32, p48]));
-writeFileSync(join(root, 'site', 'assets', 'icon-32.png'), p32);
-writeFileSync(join(root, 'site', 'assets', 'icon-180.png'), p180);
-
-console.log('make-icon: wrote assets/icon.ico, assets/icon-256.png and site/assets favicons');
+// The website lives outside this repo; refresh its favicons when it's present.
+const siteAssets = join(root, '..', 'VobViewer-site', 'site', 'assets');
+if (existsSync(siteAssets)) {
+  writeFileSync(join(siteAssets, 'favicon.ico'), await pngToIco([p16, p32, p48]));
+  writeFileSync(join(siteAssets, 'icon-32.png'), p32);
+  writeFileSync(join(siteAssets, 'icon-180.png'), p180);
+  console.log('make-icon: refreshed site favicons in', siteAssets);
+}

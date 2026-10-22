@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "icon": "node scripts/make-icon.mjs",
-    "pack": "electron-packager . VobViewer --platform=win32 --arch=x64 --icon=assets/icon.ico --out=release --overwrite --asar --ignore=\"^/release\" --ignore=\"^/docs\" --ignore=\"^/site\" --ignore=\"^/node_modules\" --ignore=\"^/PRODUCT.md\" --ignore=\"^/DESIGN.md\" --ignore=\"^/LIBRARY-BRIEF.md\" --ignore=\"^/scripts\" && node scripts/bundle-ffmpeg.js"
+    "pack": "electron-packager . VobViewer --platform=win32 --arch=x64 --icon=assets/icon.ico --out=release --overwrite --asar --ignore=\"^/release\" --ignore=\"^/docs\" --ignore=\"^/node_modules\" --ignore=\"^/PRODUCT.md\" --ignore=\"^/DESIGN.md\" --ignore=\"^/LIBRARY-BRIEF.md\" --ignore=\"^/scripts\" && node scripts/bundle-ffmpeg.js"
   },
   "repository": {
     "type": "git",
